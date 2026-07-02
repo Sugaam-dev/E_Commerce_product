@@ -1274,6 +1274,7 @@ body {
     height: 75vh;
   }
   .ai-buddy-fab { right: 16px; bottom: 16px; }
+  .ai-buddy-fab--open { display: none; }
 }
 
 /* ══════════════════════════════════════════════════════════════════
