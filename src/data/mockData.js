@@ -128,7 +128,7 @@ export const recentActivity = [
 
 // ─── SETTINGS ─────────────────────────────────────────────────
 export const settingsData = {
-  company: { name: 'PMRG Solution Pvt Ltd', gstin: '27AADCP1234F1Z5', pan: 'AADCP1234F', address: '5th Floor, Infinity Tower, Andheri East, Mumbai 400093', phone: '+91 22 6789 0000', email: 'crm@pmrgsolution.com', website: 'www.pmrgsolution.com', currency: 'INR', timezone: 'Asia/Kolkata', language: 'en-IN' },
+  company: { name: 'PMRG Solution', gstin: '27AADCP1234F1Z5', pan: 'AADCP1234F', address: 'E2-103, Sr No-296,Revell Orchid, Porwal Pune City, Pune-411047', phone: '+91-7722017100', email: 'admin@pmrgsolution.com', website: 'https://www.pmrgsolution.com', currency: 'INR', timezone: 'Asia/Kolkata', language: 'en-IN' },
   stores: [
     { id: 'S001', name: 'PMRG Andheri', city: 'Mumbai', manager: 'Aditya Kulkarni', phone: '+91 22 2674 0000', status: 'Open' },
     { id: 'S002', name: 'PMRG Pink City', city: 'Jaipur', manager: 'Preethi Rao', phone: '+91 141 455 0000', status: 'Open' },

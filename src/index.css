@@ -326,6 +326,30 @@ body {
   z-index: 50;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu-toggle-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius);
+  transition: background var(--transition), color var(--transition);
+  align-items: center;
+  justify-content: center;
+}
+.menu-toggle-btn:hover {
+  background: var(--bg);
+  color: var(--navy);
+}
+
 .breadcrumb {
   display: flex;
   align-items: center;
@@ -828,6 +852,12 @@ body {
 .custom-tooltip .tt-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .custom-tooltip .tt-val { font-weight: 700; }
 
+.grid-responsive-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1100px) {
   .stats-row { grid-template-columns: repeat(2, 1fr); }
@@ -836,10 +866,61 @@ body {
   .txn-grid { grid-template-columns: 1fr; }
 }
 
+@media (max-width: 1024px) {
+  .menu-toggle-btn {
+    display: flex;
+  }
+  .sidebar-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1100;
+  }
+  .app-layout.sidebar-open .sidebar-wrap {
+    transform: translateX(0);
+  }
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 26, 46, 0.4);
+    z-index: 1050;
+    animation: sidebarFadeIn 0.2s ease forwards;
+  }
+  @keyframes sidebarFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
 @media (max-width: 768px) {
   :root { --detail-w: 200px; }
-  .stats-row { grid-template-columns: 1fr 1fr; }
-  .voucher-row { grid-template-columns: 1fr 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .voucher-row { grid-template-columns: repeat(2, 1fr); }
+  .grid-responsive-2 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .page-body {
+    padding: 12px 12px 80px;
+    gap: 12px;
+  }
+  .top-header {
+    padding: 0 12px;
+  }
+  .header-logo {
+    display: none;
+  }
+  .breadcrumb-logo-sep {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .stats-row { grid-template-columns: 1fr; }
+  .voucher-row { grid-template-columns: 1fr; }
 }
 
 /* ===== ANIMATIONS ===== */

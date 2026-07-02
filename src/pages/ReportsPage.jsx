@@ -215,7 +215,7 @@ export default function ReportsPage() {
 
         {activeReport === 'Order Status' && (
           <div className="chart-body">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'center' }}>
+            <div className="grid-responsive-2" style={{ alignItems: 'center' }}>
               <div>
                 <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={orderStatusData} margin={{ top: 5, right: 16, left: 0, bottom: 0 }} barSize={28}>

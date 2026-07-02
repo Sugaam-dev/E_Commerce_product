@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import TopHeader from './components/TopHeader';
@@ -13,12 +14,17 @@ import CustomerProfilePage from './pages/CustomerProfilePage';
 import SettingsPage from './pages/SettingsPage';
 
 export default function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <BrowserRouter>
-      <div className="app-layout">
-        <Sidebar />
+      <div className={`app-layout ${sidebarOpen ? 'sidebar-open' : ''}`}>
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        {sidebarOpen && (
+          <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
+        )}
         <div className="main-content">
-          <TopHeader />
+          <TopHeader onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/contacts" element={<ContactsPage />} />

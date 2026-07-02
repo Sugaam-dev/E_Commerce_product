@@ -69,7 +69,7 @@ export default function SettingsPage() {
               </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
+            <div className="grid-responsive-2" style={{ gap: '18px' }}>
               {[
                 { key: 'name', label: 'Company Name', icon: 'ti-building' },
                 { key: 'gstin', label: 'GSTIN', icon: 'ti-id-badge' },

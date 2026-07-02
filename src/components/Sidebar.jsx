@@ -2,12 +2,12 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { navItems, customerData } from '../data/mockData';
 import logo from '../assests/logo.png';
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
   const isContactProfile = location.pathname.startsWith('/contacts/');
 
   return (
-    <aside className="sidebar-wrap">
+    <aside className={`sidebar-wrap ${isOpen ? 'sidebar-wrap--open' : ''}`}>
       {/* Narrow icon-only nav rail */}
       <div className="nav-rail">
         <div className="rail-logo">
@@ -23,6 +23,7 @@ export default function Sidebar() {
                 `rail-item${isActive || (item.path === '/contacts' && isContactProfile) ? ' rail-active' : ''}`
               }
               title={item.label}
+              onClick={() => onClose && onClose()}
             >
               <i className={`ti ${item.icon}`}></i>
               {item.badge && <span className="rail-badge">{item.badge}</span>}
@@ -30,10 +31,10 @@ export default function Sidebar() {
           ))}
         </nav>
         <div className="rail-bottom">
-          <div className="rail-item" title="Settings">
+          <div className="rail-item" title="Settings" onClick={() => onClose && onClose()}>
             <i className="ti ti-settings"></i>
           </div>
-          <div className="rail-item" title="Help">
+          <div className="rail-item" title="Help" onClick={() => onClose && onClose()}>
             <i className="ti ti-help-circle"></i>
           </div>
         </div>
