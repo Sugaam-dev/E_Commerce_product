@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { notifications } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
+import { useScopedNotifications } from '../utils/scopedData';
 import AIInsightCard from '../components/AIInsightCard';
 
 const typeIcons = {
@@ -14,7 +15,10 @@ const typeIcons = {
 const priorityColor = { high: '#E05C5C', medium: '#F5A623', low: '#8A9AAA' };
 
 export default function NotificationsPage() {
-  const [notifs, setNotifs] = useState(notifications);
+  const { currentUser } = useAuth();
+  const baseNotifs = useScopedNotifications(currentUser?.id);
+
+  const [notifs, setNotifs] = useState(baseNotifs);
   const [filter, setFilter] = useState('All');
 
   const types = ['All', 'order', 'return', 'payment', 'stock', 'customer', 'report'];
@@ -47,12 +51,12 @@ export default function NotificationsPage() {
       <AIInsightCard
         title="Notification Prioritisation"
         dataContext={{
-          notifications: notifications.map(n => ({
+          notifications: notifs.map(n => ({
             title: n.title, message: n.message, type: n.type,
             priority: n.priority, read: n.read, time: n.time,
           })),
-          unread: notifications.filter(n => !n.read).length,
-          highPriority: notifications.filter(n => n.priority === 'high').map(n => ({ title: n.title, type: n.type, read: n.read })),
+          unread: notifs.filter(n => !n.read).length,
+          highPriority: notifs.filter(n => n.priority === 'high').map(n => ({ title: n.title, type: n.type, read: n.read })),
         }}
         prompt="Prioritize these notifications by business urgency and financial impact. Identify which 2 need immediate action and explain why. Flag any that suggest a systemic issue (e.g., multiple returns, stock crisis)."
       />

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { customers } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
+import { useScopedCustomers } from '../utils/scopedData';
 import AIInsightCard from '../components/AIInsightCard';
 
 const tagColor = { VIP: '#F5A623', Elite: '#6366F1', Regular: '#8A9AAA', New: '#00B4A0' };
@@ -9,6 +10,9 @@ const fmt = v => new Intl.NumberFormat('en-IN').format(v);
 
 export default function ContactsPage() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const customers = useScopedCustomers(currentUser?.id);
+
   const [search, setSearch] = useState('');
   const [filterGroup, setFilterGroup] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
@@ -33,7 +37,7 @@ export default function ContactsPage() {
       return sortDir === 'asc' ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
     });
     return data;
-  }, [search, filterGroup, filterStatus, sortKey, sortDir]);
+  }, [customers, search, filterGroup, filterStatus, sortKey, sortDir]);
 
   const toggleSort = (key) => {
     if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
@@ -53,7 +57,7 @@ export default function ContactsPage() {
           { label: 'Total Customers', value: customers.length, icon: 'ti-users', color: '#00B4A0' },
           { label: 'Active', value: customers.filter(c => c.status === 'Active').length, icon: 'ti-user-check', color: '#6366F1' },
           { label: 'VIP / Elite', value: customers.filter(c => c.tag === 'VIP' || c.tag === 'Elite').length, icon: 'ti-star', color: '#F5A623' },
-          { label: 'Avg. CLV', value: `₹${fmt(Math.round(customers.reduce((s, c) => s + c.clv, 0) / customers.length))}`, icon: 'ti-coin-rupee', color: '#E05C5C' },
+          { label: 'Avg. CLV', value: customers.length ? `₹${fmt(Math.round(customers.reduce((s, c) => s + c.clv, 0) / customers.length))}` : '₹0', icon: 'ti-coin-rupee', color: '#E05C5C' },
         ].map(s => (
           <div key={s.label} className="stat-card">
             <div className="stat-label"><i className={`ti ${s.icon}`} style={{ fontSize: '14px', color: s.color }}></i>{s.label}</div>
@@ -76,7 +80,7 @@ export default function ContactsPage() {
             active: customers.filter(c => c.status === 'Active').length,
             inactive: customers.filter(c => c.status === 'Inactive').length,
             vipElite: customers.filter(c => c.tag === 'VIP' || c.tag === 'Elite').length,
-            avgSpend: Math.round(customers.reduce((s, c) => s + c.totalSpend, 0) / customers.length),
+            avgSpend: customers.length ? Math.round(customers.reduce((s, c) => s + c.totalSpend, 0) / customers.length) : 0,
           },
         }}
         prompt="Analyze this customer list — segment by tag/status/spend. Highlight churn risks (Inactive customers with high past spend) and top growth opportunities. Identify any patterns in purchasing behavior."

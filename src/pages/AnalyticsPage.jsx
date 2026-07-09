@@ -7,6 +7,8 @@ import {
 import { monthlySales, weeklyTraffic, storePerformance, categoryBreakdown } from '../data/mockData';
 import { PieChart, Pie, Cell } from 'recharts';
 import AIInsightCard from '../components/AIInsightCard';
+import { useAuth } from '../context/AuthContext';
+import { useScopedOrders } from '../utils/scopedData';
 
 const fmt = v => new Intl.NumberFormat('en-IN').format(v);
 
@@ -34,6 +36,8 @@ const radarData = storePerformance.slice(0, 6).map(s => ({
 }));
 
 export default function AnalyticsPage() {
+  const { currentUser } = useAuth();
+  const scopedOrders = useScopedOrders(currentUser?.id);
   const [metric, setMetric] = useState('revenue');
 
   const convRate = weeklyTraffic.map(d => ({
@@ -46,16 +50,18 @@ export default function AnalyticsPage() {
   const avgConvRate = ((totalConv / totalVisits) * 100).toFixed(1);
   const totalRev = monthlySales.reduce((s, m) => s + m.revenue, 0);
   const growth = ((monthlySales[11].revenue / monthlySales[0].revenue - 1) * 100).toFixed(1);
+  // Scoped revenue from this admin's delivered orders
+  const scopedRevenue = scopedOrders.filter(o => o.status === 'Delivered').reduce((s, o) => s + o.amount, 0);
 
   return (
     <div className="page-body">
       {/* KPI */}
       <div className="stats-row">
         {[
-          { label: 'Annual Revenue', value: `₹${(totalRev / 10000000).toFixed(2)}Cr`, sub: `${growth}% growth`, icon: 'ti-trending-up', color: '#00B4A0' },
-          { label: 'Weekly Visits', value: fmt(totalVisits), sub: 'This week', icon: 'ti-users', color: '#6366F1' },
-          { label: 'Avg Conv. Rate', value: `${avgConvRate}%`, sub: 'Visits → Sales', icon: 'ti-percentage', color: '#F5A623' },
-          { label: 'Peak Month', value: 'Nov', sub: '₹49,00,000 revenue', icon: 'ti-star', color: '#E05C5C' },
+          { label: 'My Revenue (Delivered)', value: `₹${fmt(scopedRevenue)}`, sub: 'Delivered orders', icon: 'ti-trending-up', color: '#00B4A0' },
+          { label: 'My Orders', value: scopedOrders.length, sub: 'All statuses', icon: 'ti-shopping-cart', color: '#6366F1' },
+          { label: 'Avg Conv. Rate', value: `${avgConvRate}%`, sub: 'Platform-wide', icon: 'ti-percentage', color: '#F5A623' },
+          { label: 'Peak Month', value: 'Nov', sub: '₹49,00,000 platform', icon: 'ti-star', color: '#E05C5C' },
         ].map(s => (
           <div key={s.label} className="stat-card">
             <div className="stat-label"><i className={`ti ${s.icon}`} style={{ fontSize: '14px', color: s.color }}></i>{s.label}</div>

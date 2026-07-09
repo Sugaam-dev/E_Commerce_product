@@ -3,8 +3,10 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
-import { monthlySales, storePerformance, topProducts, orders } from '../data/mockData';
+import { monthlySales, storePerformance, topProducts, orders as allOrders } from '../data/mockData';
 import AIInsightCard from '../components/AIInsightCard';
+import { useAuth } from '../context/AuthContext';
+import { useScopedOrders, useScopedProducts } from '../utils/scopedData';
 
 const fmt = v => new Intl.NumberFormat('en-IN').format(v);
 
@@ -27,6 +29,10 @@ const CustomTooltip = ({ active, payload, label }) => {
 const REPORTS = ['Sales Summary', 'Store Performance', 'Product Performance', 'Order Status'];
 
 export default function ReportsPage() {
+  const { currentUser } = useAuth();
+  const orders = useScopedOrders(currentUser?.id);
+  const scopedProducts = useScopedProducts(currentUser?.id);
+
   const [activeReport, setActiveReport] = useState('Sales Summary');
   const [period, setPeriod] = useState('This Year');
 

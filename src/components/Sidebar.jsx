@@ -1,10 +1,21 @@
-import { NavLink, useLocation } from 'react-router-dom';
-import { navItems, customerData } from '../data/mockData';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { adminNavItems, superAdminNavItems, customerData } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
 import logo from '../assests/logo.png';
 
 export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { currentUser, isAdmin, isSuperAdmin, logout } = useAuth();
+
   const isContactProfile = location.pathname.startsWith('/contacts/');
+  const navItems = isSuperAdmin ? superAdminNavItems : adminNavItems;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+    onClose && onClose();
+  };
 
   return (
     <aside className={`sidebar-wrap ${isOpen ? 'sidebar-wrap--open' : ''}`}>
@@ -18,7 +29,7 @@ export default function Sidebar({ isOpen, onClose }) {
             <NavLink
               key={item.path}
               to={item.path}
-              end={item.path === '/'}
+              end={item.path === '/' || item.path === '/superadmin'}
               className={({ isActive }) =>
                 `rail-item${isActive || (item.path === '/contacts' && isContactProfile) ? ' rail-active' : ''}`
               }
@@ -30,18 +41,29 @@ export default function Sidebar({ isOpen, onClose }) {
             </NavLink>
           ))}
         </nav>
+
+        {/* Bottom: user avatar + logout */}
         <div className="rail-bottom">
-          <div className="rail-item" title="Settings" onClick={() => onClose && onClose()}>
-            <i className="ti ti-settings"></i>
-          </div>
-          <div className="rail-item" title="Help" onClick={() => onClose && onClose()}>
-            <i className="ti ti-help-circle"></i>
+          {currentUser && (
+            <div className="rail-user" title={currentUser.name}>
+              <div className="rail-user-avatar">
+                {currentUser.avatarInitials || currentUser.name?.charAt(0)}
+              </div>
+            </div>
+          )}
+          <div
+            className="rail-item"
+            title="Logout"
+            onClick={handleLogout}
+            id="btn-logout-rail"
+          >
+            <i className="ti ti-logout"></i>
           </div>
         </div>
       </div>
 
-      {/* Customer detail panel — shown on contact profile pages */}
-      {isContactProfile && (
+      {/* Customer detail panel — shown on contact profile pages (admin only) */}
+      {isAdmin && isContactProfile && (
         <div className="detail-panel">
           {/* Customer Avatar & Name */}
           <div className="dp-profile">

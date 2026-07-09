@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { orders } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
+import { useScopedOrders } from '../utils/scopedData';
 import AIInsightCard from '../components/AIInsightCard';
 
 const statusColors = {
@@ -15,6 +16,9 @@ const fmt = v => new Intl.NumberFormat('en-IN').format(v);
 
 export default function OrdersPage() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const orders = useScopedOrders(currentUser?.id);
+
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [sortKey, setSortKey] = useState('date');
@@ -35,7 +39,7 @@ export default function OrdersPage() {
       return sortDir === 'asc' ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
     });
     return data;
-  }, [search, filterStatus, sortKey, sortDir]);
+  }, [orders, search, filterStatus, sortKey, sortDir]);
 
   const toggleSort = key => {
     if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');

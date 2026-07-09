@@ -9,6 +9,8 @@ import {
   statsData, transactionSummaryData, feedbackData,
   voucherData, transactionsData, monthlySales, storePerformance,
 } from '../data/mockData';
+import { useScopedOrders, useScopedProducts } from '../utils/scopedData';
+import { useAuth } from '../context/AuthContext';
 import AIInsightCard from '../components/AIInsightCard';
 
 const fmt = (v) => new Intl.NumberFormat('en-IN').format(v);
@@ -56,7 +58,13 @@ const badgeClass = (type) => {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [txnPeriod, setTxnPeriod] = useState('Last 12 Months');
+
+  // Scoped data
+  const scopedOrders = useScopedOrders(currentUser?.id);
+  const scopedProducts = useScopedProducts(currentUser?.id);
+  const scopedTransactions = transactionsData.filter(t => t.adminId === currentUser?.id);
 
   return (
     <div className="page-body">
@@ -83,7 +91,7 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* ── AI Insight — auto-loads on Dashboard ── */}
+      {/* ── AI Insight — scoped to this admin ── */}
       <AIInsightCard
         autoLoad={true}
         title="Dashboard Overview"
@@ -92,6 +100,9 @@ export default function DashboardPage() {
           storePerformance: storePerformance.map(s => ({ store: s.store, revenue: s.revenue, orders: s.orders, target: s.target })),
           currentMonth: monthlySales[monthlySales.length - 1],
           previousMonth: monthlySales[monthlySales.length - 2],
+          scopedOrderCount: scopedOrders.length,
+          scopedProductCount: scopedProducts.length,
+          adminId: currentUser?.id,
         }}
         prompt="Analyze this month's revenue, order trend across all months, and store performance vs targets. Give 3 sharp business insights and 1 concrete action item for the store owner. Focus on what's notable — peaks, dips, gaps vs target."
       />
@@ -221,7 +232,7 @@ export default function DashboardPage() {
           <a className="show-all-link" href="#">SHOW ALL</a>
         </div>
         <div className="txn-grid">
-          {(transactionsData || []).map(txn => (
+          {(scopedTransactions.length > 0 ? scopedTransactions : transactionsData).map(txn => (
             <div key={txn.id} className="txn-card" id={`txn-${txn.id}`}>
               <div className="txn-top-row">
                 <div className="txn-tag">
